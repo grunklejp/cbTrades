@@ -1,10 +1,11 @@
 class Account:
 
-
+    #   Use api key, secret, and passphrase from pro.coinbase
+      
     def __init__(self):
-        self.key = 'ahkefj'
-        self.secret = 'akskdjfke'
-        self.passphrase = 'lskajdfk'
+        self.key = ''
+        self.secret = ''
+        self.passphrase = ''
 
     def getKey(self):
         return self.key
