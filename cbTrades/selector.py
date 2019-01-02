@@ -18,19 +18,34 @@ class Selector:
         self.profit = profit
         self.bdi = bdi
         self.acc = Account()
-        self.client = TestClient(self.acc.getKey(), 
-                                 self.acc.getSecret(),
-                                 self.acc.getPassphrase())
+        self.client = cbpro.AuthenticatedClient(self.acc.getKey(), 
+                                                self.acc.getSecret(),
+                                                self.acc.getPassphrase())
+        self.testConnection()
 
+    def testConnection(self):
+        accs = self.client.get_accounts()
+        if len(accs) == 0:
+            print('failed connection')
 
-    def buy(self):
-        price = float(self.client.get_price(self.pair))
+    def buy(self): 
+        price = self.get_price(self.pair)
         ord = self.client.place_limit_order(self.pair, 'buy', price-self.bdi, self.amount)
-        return ord[-1]
+        return ord['id']
 
     def sell(self):
-        price = float(self.client.get_price(self.pair))
+        price = self.get_price(self.pair)
         ord = self.client.place_limit_order(self.pair, 'sell', price+self.profit, self.amount)
-        return ord[-1]
+        return ord['id']
 
-        
+    def get_price(self, pair):
+        tick = self.client.get_product_ticker(pair)
+        return float(tick['price'])
+
+    
+if __name__ == "__main__":
+    s = Selector('0.05', '0.05', 'BTC-USD', '0.05')
+    s.get_price('BTC-USD')
+
+
+
