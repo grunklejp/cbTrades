@@ -44,8 +44,9 @@ class Selector:
 
     
 if __name__ == "__main__":
-    s = Selector('0.05', '0.05', 'BTC-USD', '0.05')
+    s = Selector(0.05, 0.05, 'BTC-USD', 0.005)
     s.get_price('BTC-USD')
+    s.sell()
 
 
 
