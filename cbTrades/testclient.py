@@ -1,3 +1,4 @@
+from cbpro import PublicClient
 '''
 
 mimics functionality of AuthenticatedClient()
@@ -5,7 +6,7 @@ to test trading logic without using sandbox
 
 '''
 
-from cbpro import PublicClient
+
 class TestClient:
     
     def __init__(self, key, secret, passphrase):

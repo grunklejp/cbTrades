@@ -9,10 +9,12 @@ import json
 class ClientFeed(WebsocketClient):
     def on_open(self):
         self.url = "wss://ws-feed.pro.coinbase.com/"
-        self.sel = Selector(0.05, 0.05, 'ETH-USD', 0.1)
-        self.products = [self.sel.pair]
-        self.b = self.sel.buy()
-        self.s = self.sel.sell()
+        # s = (profit in usd, bdi in usd, pair, ammount of crypto to trade)
+        self.s = Selector(0.05, 0.05, 'ETH-USD', 0.01)
+        self.products = [self.s.pair]
+        self.open_sells = []
+        self.open_buy = self.s.buy()
+        self.open_sells.insert(0, self.s.sell())
 
     def on_message(self, msg):
 
@@ -31,9 +33,19 @@ class ClientFeed(WebsocketClient):
 
         ''' trade logic'''
 
-        if msg['type'] == 'done':
-            if msg['reason'] == 'filled':
-                print(json.dumps(msg, indent=4, sort_keys=True))
+        if msg['type'] == 'done' and msg['reason'] == 'filled':
+            #if account buys, places new sell target, places new buy
+            if msg['order_id'] == self.open_buy:
+                self.open_sells.insert(0, self.s.sell())
+                self.open_buy = self.s.buy()
+                
+            #if account sells cancel open buy and replace new buy and sell
+            if msg['order_id'] == self.open_sells[-1]:
+                self.open_sells.pop()
+                self.s.cancel(self.open_buy)
+                self.open_buy = self.s.buy()
+                self.open_sells.insert(0, self.s.sell())
+
 
     def on_close(self):
         print("-- Goodbye! --")
