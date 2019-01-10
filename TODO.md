@@ -4,3 +4,5 @@
 1. Use loops instead of try-catch to verify that an order has been submitted. 
 
 2. Reconfigure drip architecture, currently using similar architecture to databus.
+
+3. Update documentation
