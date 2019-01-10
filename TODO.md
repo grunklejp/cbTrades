@@ -1,6 +1,6 @@
-<h2> TO DO <h3>(ranked list)</h3></h2>
+<h2> TO DO (ranked list)</h2>
 
 
-* Use loops instead of try-catch to verify that an order has been submitted. 
+1. Use loops instead of try-catch to verify that an order has been submitted. 
 
-* Reconfigure drip architecture, currently using similar architecture to databus.
+2. Reconfigure drip architecture, currently using similar architecture to databus.
