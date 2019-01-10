@@ -19,6 +19,7 @@ class Selector:
         self.profit = profit
         self.bdi = bdi
         self.acc = Account()
+        self.buy_to_cancel = None
         self.client = cbpro.AuthenticatedClient(self.acc.getKey(), 
                                                 self.acc.getSecret(),
                                                 self.acc.getPassphrase())
@@ -30,52 +31,62 @@ class Selector:
             print('failed connection')
 
     def buy(self): 
-        price = self.get_price(self.pair)
+        price = self.get_price()
         new_price = price-self.bdi
         ord = self.client.place_limit_order(self.pair, 'buy', new_price, self.amount)
+        
         try:
-            return ord['id']
+            print(ord['id'])
+            self.buy_to_cancel = ord['id']
+            return new_price
         except KeyError:
             print('order failed trying again')
             time.sleep(0.5)
             self.buy()
         
     def sell(self):
-        price = self.get_price(self.pair)
+        price = self.get_price()
         new_price = price+self.profit
         ord = self.client.place_limit_order(self.pair, 'sell', new_price, self.amount)
         
         try:
             print(ord['id'])
-            return ord['id']
+            return new_price
         except KeyError:
             print('order failed trying again')
             time.sleep(0.5)
             self.sell()
     
-    def cancel(self, id):
-        self.client.cancel_order(id)
+    def cancel(self):
+        self.client.cancel_order(self.buy_to_cancel)
 
-    def get_price(self, pair):
-        tick = self.client.get_product_ticker(pair)
-        return float(tick['price'])
+    def get_price(self):
+        tick = self.client.get_product_ticker(self.pair)
+        try:
+            return float(tick['price'])
+        except KeyError:
+            time.sleep(0.2)
+            self.get_price()
     
-    def check_order_status(self, sell_id, buy_id):
-        s = self.client.get_order(sell_id)
-        b = self.client.get_order(buy_id)
-        if s['status'] == 'done':
+    def check_order_status(self, sell_price, buy_price):
+        current_price = self.get_price()
+        # the current price rose past the sell price so order must have executed
+        if current_price > sell_price:
             return 'sold'
-        if b['status'] == 'done':
+        # current price sunk below the price to buy. buy must have executed
+        if current_price < buy_price:
             return 'buy'
         return 'none'
 
          
-
+def tester():
+    acc = Account()
+    s = cbpro.AuthenticatedClient(acc.getKey(), acc.getSecret(), acc.getPassphrase())
+    check = s.place_limit_order('ETH-USD', 'sell', 130, 0.01)
+    print(check)
     
 if __name__ == "__main__":
-    s = Selector(0.05, 0.05, 'BTC-USD', 0.005)
-    s.get_price('BTC-USD')
-    id = s.sell()
+    tester()
     
 
 

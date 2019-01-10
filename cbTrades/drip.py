@@ -13,17 +13,16 @@ def main():
             while True:
                 time.sleep(0.5)
                 status = s.check_order_status(open_sells[-1], open_buy) #returns 'bought' or 'sold'
-                
+                print(status)
                 if status == 'bought':
                     open_sells.insert(0, s.sell())
                     open_buy = s.buy()
 
                 if status == 'sold':
                     open_sells.pop()
-                    s.cancel(open_buy)
+                    s.cancel()
                     open_buy = s.buy()
                     open_sells.insert(0, s.sell())
-                print(status)
         except KeyboardInterrupt:
             print('Closed')
             break
