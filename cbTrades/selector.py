@@ -31,7 +31,8 @@ class Selector:
 
     def buy(self): 
         price = self.get_price(self.pair)
-        ord = self.client.place_limit_order(self.pair, 'buy', price-self.bdi, self.amount)
+        new_price = price-self.bdi
+        ord = self.client.place_limit_order(self.pair, 'buy', new_price, self.amount)
         try:
             return ord['id']
         except KeyError:
@@ -41,7 +42,8 @@ class Selector:
         
     def sell(self):
         price = self.get_price(self.pair)
-        ord = self.client.place_limit_order(self.pair, 'sell', price+self.profit, self.amount)
+        new_price = price+self.profit
+        ord = self.client.place_limit_order(self.pair, 'sell', new_price, self.amount)
         
         try:
             print(ord['id'])
