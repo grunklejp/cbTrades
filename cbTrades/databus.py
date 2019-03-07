@@ -4,8 +4,6 @@ import time
 import json
 
 
-
-
 class ClientFeed(WebsocketClient):
     def on_open(self):
         self.url = "wss://ws-feed.pro.coinbase.com/"
@@ -18,7 +16,8 @@ class ClientFeed(WebsocketClient):
 
     def on_message(self, msg):
 
-        ''' msg 
+        ''' 
+        msg 
         {
             "order_id": "e6fc6c86-08f2-4740-8402-b0cb654288c4",
             "price": "115.95000000",
@@ -31,8 +30,8 @@ class ClientFeed(WebsocketClient):
         }
         '''
 
+        
         ''' trade logic'''
-
         if msg['type'] == 'done' and msg['reason'] == 'filled':
             #if account buys, places new sell target, places new buy
             if msg['order_id'] == self.open_buy:
@@ -45,7 +44,6 @@ class ClientFeed(WebsocketClient):
                 self.s.cancel(self.open_buy)
                 self.open_buy = self.s.buy()
                 self.open_sells.insert(0, self.s.sell())
-
 
     def on_close(self):
         print("-- Goodbye! --")
