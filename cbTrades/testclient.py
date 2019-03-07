@@ -1,11 +1,10 @@
 from cbpro import PublicClient
-'''
 
+'''
 mimics functionality of AuthenticatedClient()
 to test trading logic without using sandbox
 
 '''
-
 
 class TestClient:
     
@@ -15,12 +14,13 @@ class TestClient:
         self.orders = []
         self.c = PublicClient()
 
-
     def place_limit_order(self, product_id, side, price, size):
-        self.orders.append({'side': side, 
-                            'price':price, 
-                            'size': size, 
-                            'id': self.id})
+        self.orders.append(
+            {'side': side, 
+             'price':price, 
+             'size': size, 
+             'id': self.id}
+        )
         self.id += 1
         return self.orders
 
@@ -32,5 +32,3 @@ class TestClient:
 if __name__ == "__main__":
     t = TestClient('asdf','sdfa','asdf')
     print(t.get_price('ETH-USD'))
-
-
